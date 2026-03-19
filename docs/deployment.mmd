@@ -1,0 +1,11 @@
+flowchart LR
+  U([User Browser]) -->|HTTP| FE[Frontend: Vite React]
+  FE -->|Axios / JWT| BE[Backend: Node.js Express]
+  BE -->|Prisma| DB[(PostgreSQL)]
+  BE -->|OAuth2 + APIs| G[Google APIs]
+  subgraph Docker[Docker Compose]
+    FE
+    BE
+    DB
+  end
+

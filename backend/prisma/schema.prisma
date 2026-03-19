@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum DutyInterval {
+  I0800_1200
+  I1200_1600
+  I1600_2000
+}
+
+enum PlantType {
+  GRASS
+  SHRUB
+  TREE
+}
+
+model Role {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id           String  @id @default(cuid())
+  login        String  @unique
+  passwordHash String?
+  googleId     String? @unique
+  displayName  String?
+  approvedAt   DateTime?
+
+  roleId String?
+  role   Role? @relation(fields: [roleId], references: [id], onDelete: SetNull)
+
+  duties        Duty[]        @relation("DutyEmployee")
+  plantRecords  PlantRecord[] @relation("PlantRecordCreator")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([roleId])
+  @@index([approvedAt])
+}
+
+model Zone {
+  id      String @id @default(cuid())
+  name    String
+  polygon Json   // GeoJSON Polygon/MultiPolygon
+
+  duties Duty[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Duty {
+  id        String       @id @default(cuid())
+  date      DateTime     // date (00:00 UTC) normalized by API
+  interval  DutyInterval
+
+  employeeId String
+  employee   User   @relation("DutyEmployee", fields: [employeeId], references: [id], onDelete: Cascade)
+
+  zoneId String
+  zone   Zone   @relation(fields: [zoneId], references: [id], onDelete: Restrict)
+
+  googleEventId String?
+
+  plantRecords PlantRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, interval, employeeId])
+  @@index([date, interval])
+  @@index([employeeId])
+  @@index([zoneId])
+}
+
+model PlantRecord {
+  id            String    @id @default(cuid())
+  species       String
+  type          PlantType
+  endangered    Boolean   @default(false)
+  detectionTime DateTime
+  gpsLat        Decimal   @db.Decimal(9, 6)
+  gpsLng        Decimal   @db.Decimal(9, 6)
+
+  dutyId String
+  duty   Duty   @relation(fields: [dutyId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation("PlantRecordCreator", fields: [createdById], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([dutyId, detectionTime])
+  @@index([type])
+  @@index([endangered])
+}
+

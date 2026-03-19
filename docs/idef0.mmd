@@ -1,0 +1,32 @@
+flowchart LR
+  A0([A0: Duty Scheduling & Reporting System])
+  A1([A1: Register / Authenticate])
+  A2([A2: Approve Users & Assign Roles])
+  A3([A3: Manage Zones (Polygons)])
+  A4([A4: Create Duty Schedules])
+  A5([A5: Record Plant Monitoring Results])
+  A6([A6: Generate Reports])
+
+  A0 --> A1
+  A0 --> A2
+  A0 --> A3
+  A0 --> A4
+  A0 --> A5
+  A0 --> A6
+
+  C1[[Controls: Policies, Time intervals, Date range]]
+  I1[[Inputs: Registration data, Zones, Duty assignments, Plant records]]
+  O1[[Outputs: Schedules, Calendar events, Reports (Docs link)]]
+  M1[[Mechanisms: Manager, Employee, Google APIs, PostgreSQL]]
+
+  C1 -.-> A2
+  C1 -.-> A4
+  C1 -.-> A6
+  I1 --> A1
+  I1 --> A3
+  I1 --> A4
+  I1 --> A5
+  A4 --> O1
+  A6 --> O1
+  M1 -.-> A0
+

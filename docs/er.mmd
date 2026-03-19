@@ -1,0 +1,59 @@
+erDiagram
+  ROLE ||--o{ USER : has
+  USER ||--o{ DUTY : assigned
+  ZONE ||--o{ DUTY : covers
+  DUTY ||--o{ PLANT_RECORD : contains
+  USER ||--o{ PLANT_RECORD : created
+
+  ROLE {
+    string id PK
+    string name UK
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  USER {
+    string id PK
+    string login UK
+    string passwordHash
+    string googleId UK
+    string displayName
+    datetime approvedAt
+    string roleId FK
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  ZONE {
+    string id PK
+    string name
+    json polygon
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  DUTY {
+    string id PK
+    datetime date
+    string interval
+    string employeeId FK
+    string zoneId FK
+    string googleEventId
+    datetime createdAt
+    datetime updatedAt
+  }
+
+  PLANT_RECORD {
+    string id PK
+    string species
+    string type
+    boolean endangered
+    datetime detectionTime
+    decimal gpsLat
+    decimal gpsLng
+    string dutyId FK
+    string createdById FK
+    datetime createdAt
+    datetime updatedAt
+  }
+

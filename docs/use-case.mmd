@@ -1,0 +1,40 @@
+flowchart TB
+  subgraph Actors
+    M([Manager])
+    E([Employee])
+  end
+
+  subgraph System[Duty Scheduling & Reporting System]
+    UC1((Register))
+    UC2((Login))
+    UC3((Google OAuth Login))
+    UC4((Approve Users))
+    UC5((Assign Employee Role))
+    UC6((Manage Zones))
+    UC7((Create Duty Schedule))
+    UC8((View Duties))
+    UC9((Submit Plant Records))
+    UC10((Generate Report))
+    UC11((Export to Google Docs))
+    UC12((Save to Google Calendar))
+    UC13((Fetch from Google Sheets))
+  end
+
+  E --> UC1
+  E --> UC2
+  E --> UC3
+  E --> UC8
+  E --> UC9
+
+  M --> UC2
+  M --> UC3
+  M --> UC4
+  M --> UC5
+  M --> UC6
+  M --> UC7
+  M --> UC10
+
+  UC7 -.-> UC12
+  UC10 -.-> UC11
+  UC10 -.-> UC13
+
